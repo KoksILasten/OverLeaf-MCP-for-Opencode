@@ -91,7 +91,7 @@ Full example:
 ```
 
 **Important:** Add `opencode.jsonc` to your project's `.gitignore` since it contains credentials. Do **not** commit it.
-#### **  Do **not** commit opencode.jsonc. **
+#### Do **not** commit opencode.jsonc.
 
 After creating the config, restart OpenCode. The MCP server tools will be available automatically.
 
