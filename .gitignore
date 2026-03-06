@@ -1,0 +1,12 @@
+# Credentials
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# OpenCode config (contains credentials)
+opencode.jsonc

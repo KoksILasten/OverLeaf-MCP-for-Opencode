@@ -39,7 +39,6 @@ def read_overleaf_file(
         return f"Git clone failed:\n{e}"
 
     file_path = repo_dir / path
-
     if not file_path.exists():
         return f"File '{path}' does not exist in the Overleaf project."
 
@@ -105,15 +104,15 @@ def update_overleaf_section(
     heading_command : str
         The LaTeX command used for the section header.
         Examples:
-          - "section"  -> matches \section{PROJECTS}
-          - "sect"     -> matches \sect{PROJECTS} (custom macro)
+          - "section"  -> matches \\section{PROJECTS}
+          - "sect"     -> matches \\sect{PROJECTS} (custom macro)
     new_section_body : str
         New content for that section (LaTeX). Only the body is replaced.
     commit_message : str | None
         Optional git commit message.
     """
     try:
-        repo_dir = clone_overleaf_repo()
+        repo_dir = clone_overleaf_repo(pull=True)
     except Exception as e:
         return f"Git clone failed:\n{e}"
 
@@ -256,4 +255,7 @@ def summarize_overleaf_section(
 
 
 if __name__ == "__main__":
-    mcp.run()
+    # Pre-clone the repo in the background so the first tool call is fast
+    import threading
+    threading.Thread(target=clone_overleaf_repo, daemon=True).start()
+    mcp.run(transport="stdio")
