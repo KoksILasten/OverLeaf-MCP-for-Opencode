@@ -16,6 +16,7 @@ An MCP server that lets AI coding agents (OpenCode, Claude, etc.) **read**, **li
 - Git
 - An Overleaf account with **Git integration** (requires a paid plan or institutional access)
 - An Overleaf Git authentication token
+- [OpenCode](https://opencode.ai) installed
 
 ## Setup
 
@@ -46,30 +47,21 @@ pip install -r requirements.txt
 2. Go to **Menu > Git** and copy the Git clone URL (looks like `https://git.overleaf.com/<project-id>`)
 3. Go to **Account Settings > Git Integration** and generate a Git authentication token
 
-### 4. Create a `.env` file
+### 4. Configure OpenCode
 
-Create a `.env` file in this directory (it is gitignored):
-
-```
-OVERLEAF_GIT_URL=https://git.overleaf.com/<your-project-id>
-OVERLEAF_TOKEN=olp_<your-token>
-```
-
-### 5. Test the server
+Copy the example config into the root of the project you run OpenCode from (not this directory):
 
 ```bash
-# Windows (PowerShell)
-.\venv\Scripts\python server.py
-
-# Linux / macOS
-./venv/bin/python server.py
+cp opencode.jsonc.example /path/to/your/project/opencode.jsonc
 ```
 
-The server should start without errors (it communicates over stdio, so you won't see output unless there's an error).
+Then edit `opencode.jsonc` and fill in:
 
-## OpenCode Integration
+- **`command`** — absolute paths to the Python executable and `server.py` inside this repo. On Linux/macOS, use `venv/bin/python` instead of `venv/Scripts/python.exe`.
+- **`OVERLEAF_GIT_URL`** — your Overleaf Git clone URL from step 3.
+- **`OVERLEAF_TOKEN`** — your Git authentication token from step 3.
 
-To use this MCP server with [OpenCode](https://opencode.ai), create an `opencode.jsonc` file in your **project root** (the project you run OpenCode from, not this directory):
+The file should look like this (with your real values):
 
 ```jsonc
 {
@@ -77,19 +69,18 @@ To use this MCP server with [OpenCode](https://opencode.ai), create an `opencode
   "mcp": {
     "overleaf": {
       "type": "local",
-      "command": ["<path-to-this-repo>/venv/Scripts/python.exe", "<path-to-this-repo>/server.py"],
+      "command": ["C:/Programmering/OverLeaf-MCP/venv/Scripts/python.exe", "C:/Programmering/OverLeaf-MCP/server.py"],
+      "timeout": 60000,
       "environment": {
-        "OVERLEAF_GIT_URL": "https://git.overleaf.com/<your-project-id>",
-        "OVERLEAF_TOKEN": "olp_<your-token>"
+        "OVERLEAF_GIT_URL": "https://git.overleaf.com/abc123",
+        "OVERLEAF_TOKEN": "olp_your_real_token_here"
       }
     }
   }
 }
 ```
 
-Replace `<path-to-this-repo>` with the absolute path to this directory. On Linux/macOS, use `venv/bin/python` instead of `venv/Scripts/python.exe`.
-
-**Important:** Add `opencode.jsonc` to your project's `.gitignore` since it contains credentials.
+**Important:** Add `opencode.jsonc` to your project's `.gitignore` since it contains credentials. Do **not** commit it.
 
 After creating the config, restart OpenCode. The MCP server tools will be available automatically.
 
@@ -122,7 +113,7 @@ The write tool (`update_overleaf_section`) may time out through MCP due to the g
 
 ## Troubleshooting
 
-- **"Missing Overleaf configuration"** -- `OVERLEAF_GIT_URL` and `OVERLEAF_TOKEN` environment variables are not set. Check your `.env` file or `opencode.jsonc` environment block.
+- **"Missing Overleaf configuration"** -- `OVERLEAF_GIT_URL` and `OVERLEAF_TOKEN` environment variables are not set. Check your `opencode.jsonc` environment block.
 - **Git clone fails with 401** -- Your token is invalid or expired. Generate a new one in Overleaf Account Settings > Git Integration.
 - **MCP tool times out** -- The default MCP tool timeout may be too short for the initial clone. The `timeout` setting in `opencode.jsonc` controls the handshake timeout (set to 60000 for 60s). Subsequent read calls are instant.
 - **Section not found** -- The `section_title` must exactly match the text inside `\section{...}`. Check for encoding issues with non-ASCII characters.
