@@ -8,8 +8,6 @@ from urllib.parse import urlparse, urlunparse, quote
 # Overleaf configuration
 OVERLEAF_GIT_URL = os.environ.get("OVERLEAF_GIT_URL")
 OVERLEAF_TOKEN = os.environ.get("OVERLEAF_TOKEN")
-OVERLEAF_EMAIL = os.environ.get("OVERLEAF_EMAIL")
-
 # Cached repo path — set after first clone so subsequent calls just pull
 _cached_repo: Path | None = None
 _clone_lock = threading.Lock()
@@ -35,13 +33,6 @@ def run(cmd, cwd=None):
         )
 
     return result
-
-
-def get_git_email() -> str:
-    """
-    Return email to use for git commits.
-    """
-    return OVERLEAF_EMAIL or "overleaf-mcp@example.com"
 
 
 def _build_auth_url() -> str:

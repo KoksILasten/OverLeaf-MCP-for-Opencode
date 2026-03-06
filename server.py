@@ -5,7 +5,7 @@ import re
 
 from fastmcp import FastMCP
 
-from overleaf_git import clone_overleaf_repo, run, get_git_email
+from overleaf_git import clone_overleaf_repo, run
 from latex_utils import (
     normalize_latex_content,
     latex_preview,
@@ -161,9 +161,8 @@ def update_overleaf_section(
 
     file_path.write_text(new_text, encoding="utf-8")
 
-    email = get_git_email()
     run(["git", "config", "user.name", "Overleaf MCP Bot"], cwd=repo_dir)
-    run(["git", "config", "user.email", email], cwd=repo_dir)
+    run(["git", "config", "user.email", "overleaf-mcp@example.com"], cwd=repo_dir)
 
     run(["git", "add", path], cwd=repo_dir)
 
