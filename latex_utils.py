@@ -80,7 +80,8 @@ def extract_section_body(
         rf"\\subsection\b|"
         rf"\\chapter\b|"
         rf"\\cvsection\b|"
-        rf"\\end\{{document\}}"
+        rf"\\end\{{document\}}|"
+        rf"\Z"                                                   # end of string (last section in file)
         rf"))"
     )
 

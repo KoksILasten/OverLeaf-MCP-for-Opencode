@@ -13,16 +13,23 @@ _cached_repo: Path | None = None
 _clone_lock = threading.Lock()
 
 
-def run(cmd, cwd=None):
+def run(cmd, cwd=None, timeout=60):
     """
     Run a shell command and capture stderr/stdout so we can see git errors.
     """
-    result = subprocess.run(
-        cmd,
-        cwd=cwd,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            stdin=subprocess.DEVNULL,
+        )
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(
+            f"Command timed out after {timeout}s: {' '.join(cmd)}"
+        )
 
     if result.returncode != 0:
         raise RuntimeError(
@@ -80,9 +87,18 @@ def clone_overleaf_repo(pull: bool = False) -> Path:
         # If we already have a cached clone, return it (optionally pull)
         if _cached_repo is not None and _cached_repo.exists():
             if pull:
-                run(["git", "checkout", "."], cwd=_cached_repo)
-                run(["git", "pull", "--ff-only"], cwd=_cached_repo)
-            return _cached_repo
+                try:
+                    run(["git", "checkout", "."], cwd=_cached_repo)
+                    run(["git", "pull", "--ff-only"], cwd=_cached_repo)
+                except RuntimeError:
+                    # Cached repo is broken — delete and re-clone below
+                    import shutil
+                    shutil.rmtree(_cached_repo.parent, ignore_errors=True)
+                    _cached_repo = None
+                else:
+                    return _cached_repo
+            else:
+                return _cached_repo
 
         # First call — clone into a persistent temp directory
         tmpdir = tempfile.mkdtemp(prefix="overleaf_mcp_")

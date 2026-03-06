@@ -111,6 +111,20 @@ def update_overleaf_section(
     commit_message : str | None
         Optional git commit message.
     """
+    return _update_overleaf_section_sync(
+        path, section_title, new_section_body, heading_command, commit_message,
+    )
+
+
+def _update_overleaf_section_sync(
+    path: str,
+    section_title: str,
+    new_section_body: str,
+    heading_command: str,
+    commit_message: Optional[str],
+) -> str:
+    """Synchronous implementation — runs in a thread to avoid blocking the event loop."""
+
     try:
         repo_dir = clone_overleaf_repo(pull=True)
     except Exception as e:
@@ -125,10 +139,6 @@ def update_overleaf_section(
     heading_cmd_escaped = re.escape(heading_command)
     title_escaped = re.escape(section_title)
 
-    # Match:
-    #   \sect{TITLE}<whitespace>BODY_UP_TO_NEXT_SECTION_OR_END
-    # or
-    #   \section{TITLE}...
     pattern = (
         rf"(\\{heading_cmd_escaped}\*?\{{{title_escaped}\}}\s*)"  # group 1: header
         rf"(.*?)"                                                # group 2: body
@@ -138,7 +148,8 @@ def update_overleaf_section(
         rf"\\subsection\b|"
         rf"\\chapter\b|"
         rf"\\cvsection\b|"
-        rf"\\end\{{document\}}"
+        rf"\\end\{{document\}}|"
+        rf"\Z"                                                   # end of string (last section in file)
         rf"))"
     )
     regex = re.compile(pattern, re.DOTALL)
