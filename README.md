@@ -64,16 +64,26 @@ Then edit `opencode.jsonc` and fill in:
 The file should look like this (with your real values):
 
 ```jsonc
+// Windows
+"command": ["C:/path/to/OverLeaf-MCP-for-Opencode/venv/Scripts/python.exe", "C:/path/to/OverLeaf-MCP-for-Opencode/server.py"]
+
+// Linux / macOS
+"command": ["/home/user/OverLeaf-MCP-for-Opencode/venv/bin/python", "/home/user/OverLeaf-MCP-for-Opencode/server.py"]
+```
+
+Full example:
+
+```jsonc
 {
   "$schema": "https://opencode.ai/config.json",
   "mcp": {
     "overleaf": {
       "type": "local",
-      "command": ["C:/Programmering/OverLeaf-MCP/venv/Scripts/python.exe", "C:/Programmering/OverLeaf-MCP/server.py"],
+      "command": ["<absolute-path-to-repo>/venv/Scripts/python.exe", "<absolute-path-to-repo>/server.py"],
       "timeout": 60000,
       "environment": {
-        "OVERLEAF_GIT_URL": "https://git.overleaf.com/abc123",
-        "OVERLEAF_TOKEN": "olp_your_real_token_here"
+        "OVERLEAF_GIT_URL": "https://git.overleaf.com/<your-project-id>",
+        "OVERLEAF_TOKEN": "olp_<your-token>"
       }
     }
   }

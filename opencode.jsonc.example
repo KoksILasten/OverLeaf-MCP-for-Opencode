@@ -3,7 +3,7 @@
   "mcp": {
     "overleaf": {
       "type": "local",
-      "command": ["<path-to-OverLeaf-MCP>/venv/Scripts/python.exe", "<path-to-OverLeaf-MCP>/server.py"],
+      "command": ["<absolute-path-to-repo>/venv/Scripts/python.exe", "<absolute-path-to-repo>/server.py"],
       "timeout": 60000,
       "environment": {
         "OVERLEAF_GIT_URL": "https://git.overleaf.com/<your-project-id>",
