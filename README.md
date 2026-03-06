@@ -23,8 +23,8 @@ An MCP server that lets AI coding agents (OpenCode, Claude, etc.) **read**, **li
 ### 1. Clone this repository
 
 ```bash
-git clone https://github.com/Aryan1718/OverLeaf-MCP.git
-cd OverLeaf-MCP
+git clone https://github.com/KoksILasten/OverLeaf-MCP-for-Opencode.git
+cd OverLeaf-MCP-for-Opencode
 ```
 
 ### 2. Create a virtual environment and install dependencies
